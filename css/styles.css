@@ -1,0 +1,78 @@
+:root {
+    --fonte-principal: 'Poppins';
+}
+
+body {
+    background-color: rgb(228, 224, 221);
+}
+
+main {
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: var(--fonte-principal);
+}
+
+.formulario {
+    width: 20vw;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    border: 1px solid rgb(175, 173, 173);
+    border-radius: 10px;
+    padding: 1.3em;
+    background-color: white;
+    box-shadow: 0 0 0.5em;
+}
+
+.titulo_principal {
+    margin-bottom: 0.5em;
+    font-size: 2.5em;
+    font-weight: bold;
+}
+
+.label {
+    margin-bottom: 0.2em;
+    font-size: 1.2em;
+}
+
+.input {
+    margin-bottom: 1em;
+    padding: 0.9em 0.5em;
+    border-radius: 5px;
+}
+
+.button {
+    background-color: rgb(73, 224, 224);
+    padding: 1em;
+    border-radius: 5px;
+    font-size: 1em;
+    font-weight: 700;
+}
+
+.button:hover {
+    background-color: rgb(68, 145, 212);
+    transition: 0.5s;
+}
+
+.divisor {
+    text-align: center;
+    margin: 1em 0 0.5em;
+}
+
+.ancora {
+    text-align: center;
+    text-decoration: none;
+    color: rgb(55, 169, 214);
+}
+
+.ancora:hover {
+    text-decoration: underline;
+}
+
+.erro {
+    color: red;
+    line-height: 1.2em;
+}
