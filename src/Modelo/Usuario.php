@@ -1,73 +1,72 @@
 <?php
 
-namespace SisLogin\src\Modelo;
+namespace SisLogin\Projeto\Modelo;
 
-use SisLogin\src\Modelo\Crud;
-use SisLogin\src\Conexao\DB;
+require_once 'autoload\autoload.php';
+use SisLogin\Projeto\Modelo\{SalvaUsuarioNoBanco, ValidacaoDeCadastro, ValidaCadastro};
 
-require_once 'src\Modelo\Crud.php';
-require_once 'src\Conexao\DB.php';
+class Usuario implements ValidacaoDeCadastro
+{
+    protected string $usuario;
+    protected string $nome;
+    protected string $email;
+    protected string $senha;
+    protected string $repeteSenha;
+    protected array $erros = [];
 
-class Usuario extends Crud
-{   
-    public string $usuario;
-    public string $nome;
-    private string $email;
-    private string $senha;
-    private string $repeteSenha = '';
-    private array $erro = [];
-
-    public function __construct(string $usuario, string $nome, string $email, string $senha) 
-    {
+    public function __construct(
+        string $usuario,
+        string $nome,
+        string $email,
+        string $senha,
+        string $repeteSenha
+    ) {
         $this->usuario = $usuario;
         $this->nome = $nome;
         $this->email = $email;
         $this->senha = $senha;
-    }
-
-    public function setRepeteSenha(string $repeteSenha) : void {
         $this->repeteSenha = $repeteSenha;
     }
-    
-    public function validarCadastro() : array
+
+    // GETERS
+    public function getUsuario() : string
     {
-        if (!preg_match("/^[A-Za-z1-9'\s]+$/", $this->usuario)) {
-            $this->erro['erro_usuario'] = "Por favor, informe um nome de usuário válido!";
-        }
-        
-        if (!preg_match("/^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ'\s]+$/", $this->nome)) {
-            $this->erro['erro_nome'] = "Por favor, informe um nome válido!";
-        }
-
-        if (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
-            $this->erro['erro_email'] = "Por favor, informe um E-mail válido!";
-        }
-
-        if (strlen($this->senha) < 8) {
-            $this->erro['erro_senha'] = "Informe uma senha de no mínimo, 8 caracteres!";
-        }
-
-        if ($this->senha !== $this->repeteSenha) {
-            $this->erro['erro_repeteSenha'] = "A repetição da senha está diferente escolhida!";
-        }
-
-        return $this->erro;
+        return $this->usuario;
     }
 
-    public function insert()
+    public function getNome() : string
     {
-        $sql = "INSERT INTO usuarios (usuario, nome, email, senha) VALUES (:usuario, :nome, :email, :senha);";
-        $prepare = DB::preparar($sql);
+        return $this->nome;
+    }
 
-        if ($prepare) {
-            $criptoSenha = sha1($this->senha);
-            
-            return $prepare->execute([
-                ':usuario' => $this->usuario,
-                ':nome' => $this->nome,
-                ':email' => $this->email,
-                ':senha' => $criptoSenha
-            ]);
-        }
+    public function getEmail() : string
+    {
+        return $this->email;
+    }
+
+    public function getSenha() : string
+    {
+        return sha1($this->senha);
+    }
+
+    // SALVA USUÁRIO NO BANCO
+    public function salvarUsuarioNoBanco()
+    {
+        $salvar = new SalvaUsuarioNoBanco();
+        $salvar->inserir($this);
+    }
+
+    public function validarCadastro(): array
+    {
+        $validar = new ValidaCadastro();
+        $this->erros = $validar->validar(
+            $this->usuario,
+            $this->nome,
+            $this->email,
+            $this->senha,
+            $this->repeteSenha
+        );
+
+        return $this->erros;
     }
 }

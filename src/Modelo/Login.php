@@ -1,39 +1,59 @@
 <?php
 
-namespace SisLogin\src\Modelo;
+namespace SisLogin\Projeto\Modelo;
 
-use SisLogin\src\Conexao\DB;
+session_start();
 
-require_once 'src\Conexao\DB.php';
+use SisLogin\Projeto\Conexao\DB;
+
+require_once 'autoload\autoload.php';
 
 class Login
 {
     private string $usuario;
-    private string $senha;
+    private string $token;
 
-    public function __construct(string $usuario, string $senha)
+    public function logar(string $usuario, string $senha)
     {
-        $this->usuario = $usuario;
-        $this->senha = $senha;
+        $sql = "SELECT usuario, senha FROM usuarios WHERE usuario = :usuario AND senha = :senha;";
+        $prepare = DB::preparar($sql);
+        $prepare->bindValue(':usuario', $usuario);
+        $prepare->bindValue(':senha', sha1($senha));
+
+        $prepare->execute();
+        $usuario = $prepare->fetch();
+        
+        if (empty($usuario)) {
+            return "Usuário ou senha inválidos!";
+        }
+
+        $this->token = sha1(uniqid().date('d-m-Y-H-i-s'));
+        $_SESSION['TOKEN'] = $this->token;
+
+        $sql = "UPDATE usuarios SET token = :token WHERE usuario = :usuario";
+        $prepare = DB::preparar($sql);
+        $prepare->execute([
+            ':token' => $this->token,
+            ':usuario' => $usuario['usuario']
+        ]);
+
+        header('location: bem_vindo.php');
     }
 
-    public function logar()
+    public function estaAutenticado(string $token)
     {
-        $sql = "SELECT usuario, senha FROM usuarios WHERE usuario = '$this->usuario';";
-        $preparar = DB::instanciar();
+        $sql = "SELECT usuario FROM usuarios WHERE token = :token";
+        $preparar = DB::preparar($sql);
+        $preparar->bindValue(':token', $token);
 
-        if ($preparar) {
-            $query = $preparar->query($sql);
-            $usuario = $query->fetchAll();
-            
-            $senhaCripto = sha1($this->senha);
+        $preparar->execute();
+        $usuario = $preparar->fetch();
+        
+        $this->usuario = $usuario['usuario'];
+    }
 
-            if ($usuario[0]['senha'] === $senhaCripto) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-      
+    public function getUsuario() : string
+    {
+        return $this->usuario;
     }
 }

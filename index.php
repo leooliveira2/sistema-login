@@ -1,23 +1,26 @@
 <?php
 
-require_once 'src\Modelo\Login.php';
+require_once 'autoload\autoload.php';
+require_once 'src\Funcoes\limpaPost.php';
 
-use SisLogin\src\Modelo\Login;
+use SisLogin\Projeto\Modelo\Login;
 
-if (isset($_POST['usuario']) && $_POST['senha']) {
-    $login = new Login($_POST['usuario'], $_POST['senha']);
+// VERIFICA SE TODOS OS CAMPOS ESTÃO SETADOS
 
-    define('USUARIO', $_POST['usuario']);
+if (isset($_POST['usuario']) && isset($_POST['senha'])) {
+    $usuario = limpaPost($_POST['usuario']);
+    $senha = limpaPost($_POST['senha']);
 
-    if ($login->logar()) {
-        header('location: bem_vindo.php');
+    if (empty($usuario) || empty($senha)) {
+        $erroGeral = 'Todos os campos precisam ser preenchidos!';
     } else {
-        echo "<script>alert('Senha inválida');</script>";
-    }
+        $login = new Login();
+
+        $erroLogin = $login->logar($usuario, $senha);
+    } 
 }
 
 ?>
-
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -36,11 +39,30 @@ if (isset($_POST['usuario']) && $_POST['senha']) {
     <body>
         <main>
             <h1 class="titulo_principal">Login</h1>
-            <form method="post" action="" class="formulario">
+            <form method="post" class="formulario">
+
+                <!-- VALIDA O LOGIN -->
+                <h2 class='erro'>
+                    <?php 
+                        if (isset($erroGeral)) {
+                            echo $erroGeral;
+                        }
+                    
+                        if (!empty($erroLogin)) {
+                            echo $erroLogin;
+                        }
+                    ?>
+                </h2>
+
+                <!-- INSERIR USUÁRIO -->
                 <label for="usuario" class="label">Usuário</label>
-                <input type="text" name="usuario" placeholder="Informe seu usuário" required class="input">
+                <input type="text" name="usuario" placeholder="Informe seu usuário" class="input">
+
+                <!-- INSERIR SENHA -->
                 <label for="senha" class="label">Senha</label>
-                <input type="password" name="senha" placeholder="Digite sua senha" required class="input">
+                <input type="password" name="senha" placeholder="Digite sua senha" class="input">
+
+                <!-- ENVIAR OS DADOS DO FORMULÁRIO -->
                 <button type="submit" class="button">Entrar</button>
 
                 <h3 class="divisor">ou</h3>

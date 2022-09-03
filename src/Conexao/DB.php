@@ -1,8 +1,8 @@
 <?php
 
-namespace SisLogin\src\Conexao;
+namespace SisLogin\Projeto\Conexao;
 
-require_once 'config.php';
+// aqui eu importaria o arquivo config, caso usasse o postgres ou qualquer outro banco que não fosse o sqlite
 
 class DB
 {
@@ -12,11 +12,12 @@ class DB
     {
         if (!isset(self::$pdo)) {
             try {
-                self::$pdo = new \PDO(DSN, USER, PASSWORD, [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]);
+                $databasePath = __DIR__ . '\..\..\banco.sqlite';
+                self::$pdo = new \PDO('sqlite:' . $databasePath);
                 self::$pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
                 self::$pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
             } catch (\PDOException $e) {
-                echo "Falha na conexão com o banco!" . $e->getMessage();
+                echo "Falha na conexão com o banco!";
             }
         }
 
@@ -25,6 +26,7 @@ class DB
 
     public static function preparar(string $sql) : \PDOStatement
     {
-        return self::instanciar()->prepare($sql);
+        $preparar = self::instanciar()->prepare($sql);
+        return $preparar;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-// INFORMAÇÔES PRA CONEXÂO COM O BANCO DE DADOS
+// INFORMAÇÔES PRA CONEXÂO COM O BANCO DE DADOS (quando eu usar postgres)
 define("HOST", "");
 define("DB", "");
 define("USER", "");

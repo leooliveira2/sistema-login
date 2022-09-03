@@ -16,7 +16,7 @@ main {
 }
 
 .formulario {
-    width: 20vw;
+    width: 50vh;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
@@ -28,9 +28,13 @@ main {
 }
 
 .titulo_principal {
-    margin-bottom: 0.5em;
+    margin: 0.5em 0;
     font-size: 2.5em;
     font-weight: bold;
+}
+
+.margem_titulo {
+    margin-top: 2.5em;
 }
 
 .label {
@@ -68,6 +72,10 @@ main {
     color: rgb(55, 169, 214);
 }
 
+.ancora_criaConta {
+    margin-top: 0.5em;
+}
+
 .ancora:hover {
     text-decoration: underline;
 }
@@ -75,4 +83,19 @@ main {
 .erro {
     color: red;
     line-height: 1.2em;
+    margin-bottom: 0.2em;
+}
+
+/* Parte responsiva */
+
+@media screen and (max-width: 1300px) {
+    .formulario {
+        width: 40vh;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .formulario {
+        width: 80%;
+    }
 }
