@@ -1,11 +1,12 @@
 <?php
 
-use SisLogin\Projeto\Conexao\DB;
+use SisLogin\Projeto\Conexao\Conexao;
 
-require_once 'autoload\autoload.php';
+require_once 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 
 try {
-    $pdo = DB::instanciar();
+    $conexao = new Conexao();
+    $pdo = $conexao->instanciar('banco.sqlite');
     $query = $pdo->query("SELECT * FROM usuarios");
     $usuarios = $query->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {

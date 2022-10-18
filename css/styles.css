@@ -1,18 +1,14 @@
-:root {
-    --fonte-principal: 'Poppins';
-}
-
 body {
     background-color: rgb(228, 224, 221);
 }
 
 main {
-    height: 90vh;
+    height: 90%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    font-family: var(--fonte-principal);
+    font-family: 'Poppins';
 }
 
 .formulario {
@@ -27,14 +23,18 @@ main {
     box-shadow: 0 0 0.5em;
 }
 
+.margem_formulario {
+    margin-bottom: 3em;
+}
+
 .titulo_principal {
-    margin: 0.5em 0;
+    margin: 1em 0 0.5em;
     font-size: 2.5em;
     font-weight: bold;
 }
 
 .margem_titulo {
-    margin-top: 2.5em;
+    margin-top: 1.1em;
 }
 
 .label {
@@ -54,6 +54,7 @@ main {
     border-radius: 5px;
     font-size: 1em;
     font-weight: 700;
+    margin-bottom: 1em;
 }
 
 .button:hover {
@@ -89,12 +90,20 @@ main {
 /* Parte responsiva */
 
 @media screen and (max-width: 1300px) {
+    .titulo_rec_senha {
+        font-size: 2em;
+    }
+    
     .formulario {
         width: 40vh;
     }
 }
 
 @media screen and (max-width: 500px) {
+    .titulo_rec_senha {
+        font-size: 2em;
+    }
+    
     .formulario {
         width: 80%;
     }

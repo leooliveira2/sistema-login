@@ -1,14 +1,17 @@
 <?php
 
-use SisLogin\Projeto\Conexao\DB;
+use SisLogin\Projeto\Conexao\Conexao;
 
-require_once 'autoload\autoload.php';
+require_once 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 
 $id = 1;
 
 $email = 'novoemail@gmail.com';
 
-$prepare = DB::preparar("UPDATE usuarios SET email = :email WHERE id = :id");
+$conexao = new Conexao();
+$pdo = $conexao->instanciar('banco.sqlite');
+
+$prepare = $pdo->prepare("UPDATE usuarios SET email = :email WHERE id = :id");
 
 if ($prepare->execute([
     ':email' => $email,

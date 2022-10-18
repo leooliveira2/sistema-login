@@ -1,24 +1,54 @@
 <?php
 
-require_once 'autoload\autoload.php';
-require_once 'src\Funcoes\limpaPost.php';
+use SisLogin\Projeto\Conexao\Conexao;
+use SisLogin\Projeto\Excecoes\ConexaoException;
+use SisLogin\Projeto\Log\Log;
+use SisLogin\Projeto\Modelo\Erros;
+use SisLogin\Projeto\Modelo\Usuario;
 
-use SisLogin\Projeto\Modelo\Login;
+require_once 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+require_once 'Funcoes' . DIRECTORY_SEPARATOR . 'preparaDependenciasControladorLogin.php';
 
-// VERIFICA SE TODOS OS CAMPOS ESTÃO SETADOS
+if (isset($_POST['usuario']) && isset($_POST['senha'])) { 
+   
+    // Prepara o programa
+    $usuario = new Usuario(
+        usuario: $_POST['usuario'],
+        senha: $_POST['senha']
+    );
 
-if (isset($_POST['usuario']) && isset($_POST['senha'])) {
-    $usuario = limpaPost($_POST['usuario']);
-    $senha = limpaPost($_POST['senha']);
+    $controladorDeErros = new Erros();
 
-    if (empty($usuario) || empty($senha)) {
-        $erroGeral = 'Todos os campos precisam ser preenchidos!';
-    } else {
-        $login = new Login();
+    $log = new Log(new \DateTimeImmutable());
 
-        $erroLogin = $login->logar($usuario, $senha);
+    try {
+        $con = new Conexao();
+        $conexaoComOBanco = $con->instanciar('banco.sqlite');
+    } catch (\PDOException $e) {
+        $log->gerarLogDeErro($e->getMessage());
+        header('location: erro.html');
+    }
+    
+    $controlador = preparaDependenciasControladorLogin(
+        $usuario,
+        $controladorDeErros,
+        $conexaoComOBanco,
+    );
+
+    // Executa o programa
+    try {
+        $retornoDoControlador = $controlador->execucoes($controladorDeErros);
+    } catch (ConexaoException $e) {
+        $log->gerarLogDeErro($e->getMessage());
+        header('location: erro.html');
     } 
-}
+
+    if ($retornoDoControlador) {
+        header('location: bem_vindo.php');
+    }
+
+    $erros = $controladorDeErros->getErros();
+} 
 
 ?>
 
@@ -41,33 +71,46 @@ if (isset($_POST['usuario']) && isset($_POST['senha'])) {
             <h1 class="titulo_principal">Login</h1>
             <form method="post" class="formulario">
 
-                <!-- VALIDA O LOGIN -->
                 <h2 class='erro'>
                     <?php 
-                        if (isset($erroGeral)) {
-                            echo $erroGeral;
-                        }
-                    
-                        if (!empty($erroLogin)) {
-                            echo $erroLogin;
+                        if (isset($erros[21])) {
+                            echo $erros[21];
                         }
                     ?>
                 </h2>
 
                 <!-- INSERIR USUÁRIO -->
+                <h2 class='erro'>
+                    <?php 
+                        if (isset($erros[1])) {
+                            echo $erros[1];
+                        }
+                    ?>
+                </h2>
+
                 <label for="usuario" class="label">Usuário</label>
-                <input type="text" name="usuario" placeholder="Informe seu usuário" class="input">
+                <input type="text" name="usuario" placeholder="Informe seu usuário" class="input"
+                    <?php if (isset($_POST['usuario'])) { echo " value='$_POST[usuario]'"; } ?>>
 
                 <!-- INSERIR SENHA -->
+                <h2 class='erro'>
+                    <?php 
+                        if (isset($erros[9])) {
+                            echo $erros[9];
+                        }
+                    ?>
+                </h2>
+
                 <label for="senha" class="label">Senha</label>
                 <input type="password" name="senha" placeholder="Digite sua senha" class="input">
 
                 <!-- ENVIAR OS DADOS DO FORMULÁRIO -->
                 <button type="submit" class="button">Entrar</button>
 
-                <h3 class="divisor">ou</h3>
+                <a href="usuarioExisteParaRedefinicaoDeSenhaWeb.php" class="ancora">Esqueçeu sua senha? Clique aqui para redefini-lá</a>
 
-                <a href="criarConta.php" class="ancora">Clique aqui para criar sua conta</a>
+                <h3 class='divisor'>Ou se ainda não é cadastrado...</h3>
+                <a href="criarContaWeb.php" class="ancora">Clique aqui para criar sua conta</a>
             </form>
         </main>
     </body>

@@ -1,0 +1,38 @@
+.cabecalho {
+    background-color: rgb(98, 219, 219);
+    height: 20vh;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    border: 1px solid black;
+    box-shadow: 0 0 0.5em;
+}
+
+.titulo_cabecalho {
+    font-weight: 700;
+    font-size: 2em;
+}
+
+.ancora_cabecalho {
+    text-decoration: none;
+    color: black;
+    font-weight: 500;
+    font-size: 1.6em;
+}
+
+.ancora_cabecalho:hover {
+    text-decoration: underline;
+    color: white;
+}
+
+.botao_sair {
+    padding: 0.3em 1em;
+    color: black;
+    font-size: 1.3em;
+    border-radius: 5px;
+}
+
+.botao_sair:hover {
+    background-color: black;
+    color: white;
+}

@@ -1,10 +1,11 @@
 <?php
 
-use SisLogin\Projeto\Conexao\DB;
+use SisLogin\Projeto\Conexao\Conexao;
 
-require_once 'autoload\autoload.php';
+require_once 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 
-$pdo = DB::instanciar();
+$conexao = new Conexao();
+$pdo = $conexao->instanciar('banco.sqlite');
 
 $op = 2;
 
